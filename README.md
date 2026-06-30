@@ -136,12 +136,6 @@ Stopped the existing service or changed the port mapping.
 
 ---
 
-## Application Access
-
-http://15.207.236.200
-
----
-
 ## Future Enhancements
 
 * Configure custom domain using DNS.
