@@ -138,7 +138,7 @@ Stopped the existing service or changed the port mapping.
 
 ## Application Access
 
-http://<EC2-PUBLIC-IP>
+http://15.207.236.200
 
 ---
 
@@ -149,4 +149,6 @@ http://<EC2-PUBLIC-IP>
 * Deploy using Docker Compose or Kubernetes.
 
 ---
+
+
 
