@@ -2,69 +2,151 @@
 
 ## Overview
 
-This project demonstrates how to Dockerize a Spring Boot application connected to a MySQL database, and how to automate its build and deployment using a Jenkins pipeline. The project includes:
+This project demonstrates the deployment of a Dockerized Spring Boot application integrated with a MySQL database and automated using a Jenkins CI/CD pipeline.
 
-- **Spring Boot application** packaged as a Docker container
-- **MySQL database** running in a separate Docker container
-- A shared Docker network for container communication
-- A **Jenkins pipeline** that builds, deploys, and manages both containers intelligently
+The project includes:
+
+* Spring Boot application packaged as a Docker container
+* MySQL database running in a separate Docker container
+* Shared Docker network for container communication
+* Jenkins pipeline for automated build and deployment
+* Deployment on AWS EC2 with Apache Reverse Proxy
+
+---
+
+## Technologies Used
+
+* Java 17
+* Spring Boot
+* MySQL
+* Docker
+* Apache HTTP Server
+* Jenkins
+* Maven
+* Git
+* AWS EC2
+* Linux
 
 ---
 
 ## Repository Contents
 
-- `Dockerfile` — Builds Docker image for the Spring Boot app  
-- `application.properties` — Configured for MySQL connection via Docker container hostname  
-- `Jenkinsfile` — Pipeline script for CI/CD automation  
-- Spring Boot source code and Maven project files
+* Dockerfile – Builds Docker image for the Spring Boot application
+* application.properties – MySQL database configuration
+* Jenkinsfile – CI/CD pipeline script
+* Spring Boot source code and Maven project files
+
+---
+
+## Architecture
+
+User Browser
+↓
+AWS EC2
+↓
+Apache HTTP Server (Reverse Proxy)
+↓
+Spring Boot Application (Docker Container)
+↓
+MySQL Database
 
 ---
 
 ## Prerequisites
 
-- Jenkins installed with Docker and Maven available on the agent node  
-- Docker installed and running on the Jenkins agent machine  
-- Git access to this repository  
+* Java 17
+* Maven
+* Docker
+* MySQL
+* Jenkins
+* Git
 
 ---
 
-## How It Works
+## Deployment Steps
 
-1. **Docker Network Setup**  
-   Jenkins pipeline creates a Docker network `app-network` if it does not already exist.
+### Clone Repository
 
-2. **MySQL Container**  
-   The pipeline checks if a MySQL container named `mysql-container` is running; if not, it starts or creates it with root password `1234`.
+git clone https://github.com/Sanjay-Hegde16/sak_spring_jenkins_mysql_docker.git
 
-3. **Build Spring Boot Application**  
-   Runs Maven to clean and package the Spring Boot JAR without tests.
+### Build Application
 
-4. **Build Spring Boot Docker Image**  
-   Uses the provided `Dockerfile` to build a Docker image tagged as `spring-app`.
+mvn clean package
 
-5. **Run Spring Boot Container**  
-   Checks if a container named `spring-app-container` is running. If not, it removes any stopped containers with the same name and runs a new container attached to the Docker network.
+### Build Docker Image
 
-6. **Connectivity**  
-   The Spring Boot app connects to MySQL via hostname `mysql-container` on port 3306.
+docker build -t sak-app .
+
+### Run MySQL Container
+
+docker run -d 
+--name mysql-container 
+--network app-network 
+-e MYSQL_ROOT_PASSWORD=1234 
+mysql:8
+
+### Run Application Container
+
+docker run -d 
+--name spring-app-container 
+--network app-network 
+-p 8080:8080 
+spring-app
 
 ---
 
-## Configuration Details
+## Application Configuration
 
-### `application.properties`
-
-```properties
 spring.datasource.url=jdbc:mysql://mysql-container:3306/myapplication?createDatabaseIfNotExist=true
 spring.datasource.username=root
 spring.datasource.password=1234
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-```
 
 ---
-## admin login
 
-- username: admin
-- password: admin
+## Admin Login
+
+Username: admin
+Password: admin
+
 ---
-*Script Done by SAK*
+
+## Troubleshooting
+
+### Issue 1
+
+Error:
+Communications link failure
+
+Reason:
+Docker container could not connect to MySQL.
+
+Solution:
+Configured Docker networking correctly and ensured MySQL container was running.
+
+### Issue 2
+
+Error:
+Port 8080 was already in use.
+
+Reason:
+Another Spring Boot application was already running on port 8080.
+
+Solution:
+Stopped the existing service or changed the port mapping.
+
+---
+
+## Application Access
+
+http://<EC2-PUBLIC-IP>
+
+---
+
+## Future Enhancements
+
+* Configure custom domain using DNS.
+* Enable HTTPS using SSL certificates.
+* Deploy using Docker Compose or Kubernetes.
+
+---
+
